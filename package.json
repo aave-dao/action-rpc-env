@@ -1,5 +1,5 @@
 {
-  "name": "@bgd-labs/rpc-env",
+  "name": "@aave-dao/rpc-env",
   "version": "2.4.3",
   "private": true,
   "publishConfig": {
@@ -12,11 +12,10 @@
     "format": "biome check --write",
     "prepublishOnly": "npm run build"
   },
-  "author": "Jonas Strassel <jonas@bdglabs.com>",
   "license": "MIT",
   "devDependencies": {
     "@actions/core": "^3.0.0",
-    "@bgd-labs/toolbox": "^0.2.21",
+    "@aave-dao/toolbox": "^0.4.0",
     "@biomejs/biome": "^2.4.6",
     "@types/node": "^25.4.0",
     "lefthook": "^2.1.3",

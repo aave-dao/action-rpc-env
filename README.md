@@ -1,4 +1,4 @@
-# BGD RPC ENV
+# Aave RPC ENV
 
 When working on multichain projects it is a tedious task to setup private RPCs and managing them in your local environment or github actions.
 This repository is a suite of tools to streamline the handling of RPC environment variables, by automating the creation and injection of environment variables following a common naming scheme
@@ -28,7 +28,7 @@ The supported environment variables are documented in [this](src/lib.test.ts) te
 #### Usage
 
 ```yaml
-- uses: bgd-labs/action-rpc-env@main
+- uses: aave-dao/action-rpc-env@main
   with:
     ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
     QUICKNODE_TOKEN: ${{ secrets.QUICKNODE_TOKEN }}
