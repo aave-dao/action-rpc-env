@@ -13,6 +13,7 @@
     "prepublishOnly": "npm run build"
   },
   "license": "MIT",
+  "author": "Aave",
   "devDependencies": {
     "@actions/core": "^3.0.0",
     "@aave-dao/toolbox": "^0.4.0",
