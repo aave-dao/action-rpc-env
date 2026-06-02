@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # pin@v6.0.0
 
-      - uses: bgd-labs/github-workflows/.github/actions/setup-node@main
+      - uses: aave-dao/github-workflows/.github/actions/setup-node@main
 
       - name: test action
         uses: ./

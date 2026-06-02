@@ -1,4 +1,4 @@
-# Changelog
+# Aave RPC ENV Changelog
 
 ## [2.4.3](https://github.com/bgd-labs/action-rpc-env/compare/v2.4.2...v2.4.3) (2026-02-03)
 

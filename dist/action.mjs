@@ -36222,6 +36222,51 @@ var ink = /* @__PURE__ */ defineChain({
   sourceId: sourceId4
 });
 
+// node_modules/viem/_esm/chains/definitions/inkSepolia.js
+var sourceId5 = 11155111;
+var inkSepolia = /* @__PURE__ */ defineChain({
+  ...chainConfig2,
+  id: 763373,
+  name: "Ink Sepolia",
+  nativeCurrency: { name: "Sepolia Ether", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc-gel-sepolia.inkonchain.com"]
+    }
+  },
+  blockExplorers: {
+    default: {
+      name: "Blockscout",
+      url: "https://explorer-sepolia.inkonchain.com/",
+      apiUrl: "https://explorer-sepolia.inkonchain.com/api/v2"
+    }
+  },
+  contracts: {
+    ...chainConfig2.contracts,
+    multicall3: {
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+      blockCreated: 0
+    },
+    disputeGameFactory: {
+      [sourceId5]: {
+        address: "0x860e626c700af381133d9f4af31412a2d1db3d5d"
+      }
+    },
+    portal: {
+      [sourceId5]: {
+        address: "0x5c1d29c6c9c8b0800692acc95d700bcb4966a1d7"
+      }
+    },
+    l1StandardBridge: {
+      [sourceId5]: {
+        address: "0x33f60714bbd74d62b66d79213c348614de51901c"
+      }
+    }
+  },
+  testnet: true,
+  sourceId: sourceId5
+});
+
 // node_modules/viem/_esm/linea/actions/estimateGas.js
 init_parseAccount();
 init_toHex();
@@ -36476,7 +36521,7 @@ var metis = /* @__PURE__ */ defineChain({
 });
 
 // node_modules/viem/_esm/chains/definitions/optimism.js
-var sourceId5 = 1;
+var sourceId6 = 1;
 var optimism = /* @__PURE__ */ defineChain({
   ...chainConfig2,
   id: 10,
@@ -36497,12 +36542,12 @@ var optimism = /* @__PURE__ */ defineChain({
   contracts: {
     ...chainConfig2.contracts,
     disputeGameFactory: {
-      [sourceId5]: {
+      [sourceId6]: {
         address: "0xe5965Ab5962eDc7477C8520243A95517CD252fA9"
       }
     },
     l2OutputOracle: {
-      [sourceId5]: {
+      [sourceId6]: {
         address: "0xdfe97868233d1aa22e815a266982f2cf17685a27"
       }
     },
@@ -36511,21 +36556,21 @@ var optimism = /* @__PURE__ */ defineChain({
       blockCreated: 4286263
     },
     portal: {
-      [sourceId5]: {
+      [sourceId6]: {
         address: "0xbEb5Fc579115071764c7423A4f12eDde41f106Ed"
       }
     },
     l1StandardBridge: {
-      [sourceId5]: {
+      [sourceId6]: {
         address: "0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1"
       }
     }
   },
-  sourceId: sourceId5
+  sourceId: sourceId6
 });
 
 // node_modules/viem/_esm/chains/definitions/optimismSepolia.js
-var sourceId6 = 11155111;
+var sourceId7 = 11155111;
 var optimismSepolia = /* @__PURE__ */ defineChain({
   ...chainConfig2,
   id: 11155420,
@@ -36546,12 +36591,12 @@ var optimismSepolia = /* @__PURE__ */ defineChain({
   contracts: {
     ...chainConfig2.contracts,
     disputeGameFactory: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1"
       }
     },
     l2OutputOracle: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"
       }
     },
@@ -36560,18 +36605,18 @@ var optimismSepolia = /* @__PURE__ */ defineChain({
       blockCreated: 1620204
     },
     portal: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0x16Fc5058F25648194471939df75CF27A2fdC48BC"
       }
     },
     l1StandardBridge: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0xFBb0621E0B23b5478B630BD55a5f21f67730B0F1"
       }
     }
   },
   testnet: true,
-  sourceId: sourceId6
+  sourceId: sourceId7
 });
 
 // node_modules/viem/_esm/chains/definitions/plasma.js
@@ -36765,7 +36810,7 @@ var sepolia = /* @__PURE__ */ defineChain({
 });
 
 // node_modules/viem/_esm/chains/definitions/soneium.js
-var sourceId7 = 1;
+var sourceId8 = 1;
 var soneium = /* @__PURE__ */ defineChain({
   ...chainConfig2,
   id: 1868,
@@ -36786,23 +36831,23 @@ var soneium = /* @__PURE__ */ defineChain({
   contracts: {
     ...chainConfig2.contracts,
     disputeGameFactory: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0x512a3d2c7a43bd9261d2b8e8c9c70d4bd4d503c0"
       }
     },
     l2OutputOracle: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0x0000000000000000000000000000000000000000"
       }
     },
     portal: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0x88e529a6ccd302c948689cd5156c83d4614fae92",
         blockCreated: 7061266
       }
     },
     l1StandardBridge: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0xeb9bf100225c214efc3e7c651ebbadcf85177607",
         blockCreated: 7061266
       }
@@ -36812,7 +36857,7 @@ var soneium = /* @__PURE__ */ defineChain({
       blockCreated: 1
     }
   },
-  sourceId: sourceId7
+  sourceId: sourceId8
 });
 
 // node_modules/viem/_esm/chains/definitions/sonic.js
@@ -39341,7 +39386,7 @@ async function ao(e, t) {
 var Do = de(it, 0);
 var lo = { parse: de(ou), formatAST: de(su), formatDoc: de(au), printToDoc: de(Du), printDocToString: de(lu) };
 
-// node_modules/@bgd-labs/toolbox/dist/index.mjs
+// node_modules/@aave-dao/toolbox/dist/index.mjs
 __toESM(require_standalone2());
 
 // node_modules/base-x/src/esm/index.js
@@ -39478,7 +39523,7 @@ var esm_default = base2;
 var ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 esm_default(ALPHABET);
 
-// node_modules/@bgd-labs/toolbox/dist/index.mjs
+// node_modules/@aave-dao/toolbox/dist/index.mjs
 var __defProp2 = Object.defineProperty;
 var __exportAll = (all, no_symbols) => {
   let target = {};
@@ -39521,6 +39566,7 @@ var ChainId = {
   zksync: zksync.id,
   linea: linea.id,
   ink: ink.id,
+  ink_sepolia: inkSepolia.id,
   soneium: soneium.id,
   bob: bob.id,
   plasma: plasma.id,
@@ -39531,7 +39577,9 @@ var ChainId = {
   [ChainId.avalanche]: {
     ...avalanche},
   [ChainId.avalanche_fuji]: {
-    ...avalancheFuji}});
+    ...avalancheFuji},
+  [ChainId.ink_sepolia]: {
+    ...inkSepolia}});
 var alchemyNetworkMap = {
   1: "eth-mainnet",
   10: "opt-mainnet",
@@ -39544,6 +39592,7 @@ var alchemyNetworkMap = {
   137: "polygon-mainnet",
   143: "monad-mainnet",
   146: "sonic-mainnet",
+  196: "xlayer-mainnet",
   204: "opbnb-mainnet",
   232: "lens-mainnet",
   252: "frax-mainnet",
@@ -39567,9 +39616,9 @@ var alchemyNetworkMap = {
   1328: "sei-testnet",
   1329: "sei-mainnet",
   1514: "story-mainnet",
-  1672: "pharos-mainnet",
   1868: "soneium-mainnet",
   1946: "soneium-minato",
+  1952: "xlayer-testnet",
   2020: "ronin-mainnet",
   2201: "stable-testnet",
   2442: "polygonzkevm-cardona",
@@ -39580,6 +39629,7 @@ var alchemyNetworkMap = {
   4114: "citrea-mainnet",
   4157: "crossfi-testnet",
   4158: "crossfi-mainnet",
+  4217: "tempo-mainnet",
   4326: "megaeth-mainnet",
   4801: "worldchain-sepolia",
   5e3: "mantle-mainnet",
@@ -39611,7 +39661,6 @@ var alchemyNetworkMap = {
   42161: "arb-mainnet",
   42170: "arbnova-mainnet",
   42220: "celo-mainnet",
-  42429: "tempo-testnet",
   42431: "tempo-moderato",
   43113: "avax-fuji",
   43114: "avax-mainnet",
@@ -39640,7 +39689,9 @@ var alchemyNetworkMap = {
   688689: "pharos-atlantic",
   763373: "ink-sepolia",
   808813: "bob-sepolia",
+  2019775: "jovay-testnet",
   5042002: "arc-testnet",
+  5734951: "jovay-mainnet",
   6985385: "humanity-mainnet",
   7777777: "zora-mainnet",
   11142220: "celo-sepolia",
@@ -39653,7 +39704,7 @@ var alchemyNetworkMap = {
   728126428: "tron-mainnet",
   999999999: "zora-sepolia",
   3448148188: "tron-testnet",
-  "null": "sui-testnet"
+  "null": "stellar-testnet"
 };
 var quicknodeNetworkMap = {
   1: "mainnet",
@@ -39744,7 +39795,8 @@ var publicRPCs = {
   [ChainId.linea]: "https://rpc.linea.build",
   [ChainId.bob]: "https://rpc.gobob.xyz",
   [ChainId.plasma]: "https://rpc.plasma.to",
-  [ChainId.ink]: "https://ink-public.nodies.app"
+  [ChainId.ink]: "https://ink-public.nodies.app",
+  [ChainId.ink_sepolia]: "https://rpc-gel-sepolia.inkonchain.com"
 };
 Object.values(ChainId).filter((id) => alchemyNetworkMap[id]);
 var getNetworkEnv = (chainId) => {
