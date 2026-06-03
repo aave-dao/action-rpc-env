@@ -1,5 +1,48 @@
 # Aave RPC ENV Changelog
 
+## 1.0.0 (2026-06-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* trigger a new release
+
+### Features
+
+* :art: Initialize the rpc-env action ([79f0fc8](https://github.com/aave-dao/action-rpc-env/commit/79f0fc89f7d28364e3e8328f5516ea28c415a755))
+* add config for linea ([#39](https://github.com/aave-dao/action-rpc-env/issues/39)) ([d8de31a](https://github.com/aave-dao/action-rpc-env/commit/d8de31a47fb0657a7dbb6fb7ffe3e83e6c3a9293))
+* add getClient ([#63](https://github.com/aave-dao/action-rpc-env/issues/63)) ([ab43752](https://github.com/aave-dao/action-rpc-env/commit/ab437522fa8ad0c3d824405c73ce07acf69e3ace))
+* expose chainList ([#31](https://github.com/aave-dao/action-rpc-env/issues/31)) ([9ca7ca1](https://github.com/aave-dao/action-rpc-env/commit/9ca7ca1550d02b5d89733c815bc0a0d992f8c1dd))
+* functionality was moved to the toolbox repo ([#90](https://github.com/aave-dao/action-rpc-env/issues/90)) ([111dd51](https://github.com/aave-dao/action-rpc-env/commit/111dd51ab7a83e24c066c131dde64dc32e087d6c))
+* initial quicknode support ([#38](https://github.com/aave-dao/action-rpc-env/issues/38)) ([6b70b22](https://github.com/aave-dao/action-rpc-env/commit/6b70b222a0737572d6cd7fc3cdb0b5dbe474ad52))
+
+
+### Bug Fixes
+
+* :bug: Use current release node workflow ([1217cef](https://github.com/aave-dao/action-rpc-env/commit/1217cef18dd22cfba0efc3087c7e14ad943f04d9))
+* 📢 publish with public access ([a74bf2c](https://github.com/aave-dao/action-rpc-env/commit/a74bf2cb6e54352d0ba821fbf187472bd9be0a08))
+* add default quicknode ([#45](https://github.com/aave-dao/action-rpc-env/issues/45)) ([cd4ea52](https://github.com/aave-dao/action-rpc-env/commit/cd4ea52c62bf054252840745e63566cf97cbe99d))
+* add sonic and mantle ([#68](https://github.com/aave-dao/action-rpc-env/issues/68)) ([f1401bb](https://github.com/aave-dao/action-rpc-env/commit/f1401bb72055394f4a85b3abfee951669e19157c))
+* allow quicknode on get client ([#72](https://github.com/aave-dao/action-rpc-env/issues/72)) ([ad14a20](https://github.com/aave-dao/action-rpc-env/commit/ad14a204953c7182012ec9bd20360d3f2fe0bef3))
+* arbitrum env ([42b121a](https://github.com/aave-dao/action-rpc-env/commit/42b121ac9a889ab73ba0427b59c40c6aa6329355))
+* artifact ([5bd8b82](https://github.com/aave-dao/action-rpc-env/commit/5bd8b82dfba29207fbfa261e00738483ab17d177))
+* build action ([3589f96](https://github.com/aave-dao/action-rpc-env/commit/3589f9652e25f15ec5273b98ae3dd9fc1aac76f9))
+* built actions ([#114](https://github.com/aave-dao/action-rpc-env/issues/114)) ([086e5ca](https://github.com/aave-dao/action-rpc-env/commit/086e5ca5e20d126820c8f4dac6b7b08c95867a44))
+* **deps-dev:** bump viem in the dependencies group ([#18](https://github.com/aave-dao/action-rpc-env/issues/18)) ([1b79c01](https://github.com/aave-dao/action-rpc-env/commit/1b79c01b3200fc49944ed340e5a07dc90ffe6ecd))
+* do not throw when no env is found & add bin ([#29](https://github.com/aave-dao/action-rpc-env/issues/29)) ([dd8b6f8](https://github.com/aave-dao/action-rpc-env/commit/dd8b6f820fcba266ad0c58aef26a0d025ab22364))
+* fallback to public rpcs ([#35](https://github.com/aave-dao/action-rpc-env/issues/35)) ([8198f9a](https://github.com/aave-dao/action-rpc-env/commit/8198f9a1a0d6487eaa0d4e7ad4d04258d9ca66e6))
+* reverse lookup for chain objects ([#33](https://github.com/aave-dao/action-rpc-env/issues/33)) ([2643202](https://github.com/aave-dao/action-rpc-env/commit/26432023db42fceaaf41d275881d307953f9d17e))
+* update public rpcs ([#91](https://github.com/aave-dao/action-rpc-env/issues/91)) ([bd44393](https://github.com/aave-dao/action-rpc-env/commit/bd44393dfc87484624490e2c108d64fccda071c6))
+* update to latest ([2954926](https://github.com/aave-dao/action-rpc-env/commit/29549266b6c13d4874f48a7342ef3523820937e4))
+* update toolbox to account for plasma ([4e8983d](https://github.com/aave-dao/action-rpc-env/commit/4e8983d29ffe8908b0b4dfe80a50d11cd441c335))
+* update tooling ([5191193](https://github.com/aave-dao/action-rpc-env/commit/5191193b0de7443bda94b6f42092c83e32464adc))
+* updated toolbox version to .56 ([#112](https://github.com/aave-dao/action-rpc-env/issues/112)) ([576bbfd](https://github.com/aave-dao/action-rpc-env/commit/576bbfd70755ed80252f197ef637c5faff0f2895))
+
+
+### Code Refactoring
+
+* trigger a new release ([f80f753](https://github.com/aave-dao/action-rpc-env/commit/f80f753c19b983c194f759bbacbd498b85ce8237))
+
 ## [2.4.3](https://github.com/bgd-labs/action-rpc-env/compare/v2.4.2...v2.4.3) (2026-02-03)
 
 
