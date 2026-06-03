@@ -1,6 +1,6 @@
 {
   "name": "@aave-dao/rpc-env",
-  "version": "2.4.3",
+  "version": "1.0.0",
   "private": true,
   "publishConfig": {
     "access": "public"
