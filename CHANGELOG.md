@@ -1,5 +1,12 @@
 # Aave RPC ENV Changelog
 
+## [1.1.0](https://github.com/aave-dao/action-rpc-env/compare/v1.0.0...v1.1.0) (2026-06-22)
+
+
+### Features
+
+* update and add more defaults in network map ([#5](https://github.com/aave-dao/action-rpc-env/issues/5)) ([135b0b1](https://github.com/aave-dao/action-rpc-env/commit/135b0b135453164d98ccab9922974d74f2a7cf83))
+
 ## 1.0.0 (2026-06-03)
 
 
