@@ -1,7 +1,5 @@
 version: 2
 updates:
-  # as for bundling purposes, we only have devDependencies
-  # we're separating the actual devDependencies from the dependencies here
   - package-ecosystem: "npm"
     directory: /
     schedule:
