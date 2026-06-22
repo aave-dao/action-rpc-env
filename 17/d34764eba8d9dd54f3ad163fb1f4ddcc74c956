@@ -1,0 +1,14 @@
+package.json
+  h_739c25e72c37fb 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "17d34764eba8d9dd54f3ad163fb1f4ddcc74c956",
+  "prompts": {},
+  "humans": {
+    "h_739c25e72c37fb": {
+      "author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
