@@ -39428,6 +39428,21 @@ var __exportAll = (all, no_symbols) => {
   }
   return target;
 };
+var arc = defineChain({
+  id: 5042,
+  name: "Arc",
+  nativeCurrency: {
+    name: "USDC",
+    symbol: "USDC",
+    decimals: 18
+  },
+  rpcUrls: { default: { http: [] } },
+  blockExplorers: { default: {
+    name: "Arc Explorer",
+    url: "https://explorer.arc.io"
+  } },
+  contracts: { multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" } }
+});
 var ChainId = {
   celo: celo.id,
   mainnet: mainnet.id,
@@ -39462,7 +39477,8 @@ var ChainId = {
   plasma: plasma.id,
   xLayer: xLayer.id,
   megaeth: megaeth.id,
-  monad: monad.id
+  monad: monad.id,
+  arc: arc.id
 };
 ({
   [ChainId.avalanche]: {
@@ -39472,8 +39488,7 @@ var ChainId = {
   [ChainId.ink_sepolia]: {
     ...inkSepolia},
   [ChainId.monad]: {
-    ...monad}
-});
+    ...monad}});
 var alchemyNetworkMap = {
   1: "eth-mainnet",
   10: "opt-mainnet",
@@ -39702,7 +39717,12 @@ var publicRPCs = {
   [ChainId.megaeth]: "https://mainnet.megaeth.com/rpc",
   [ChainId.monad]: "https://monad-mainnet.drpc.org"
 };
-Object.values(ChainId).filter((id) => alchemyNetworkMap[id]);
+var manualAlchemyNetworkMap = { [ChainId.arc]: "arc-mainnet" };
+var alchemyNetworks = {
+  ...alchemyNetworkMap,
+  ...manualAlchemyNetworkMap
+};
+Object.values(ChainId).filter((id) => alchemyNetworks[id]);
 var getNetworkEnv = (chainId) => {
   const symbol = Object.entries(ChainId).find(([, value]) => value === chainId)?.[0];
   if (!symbol) throw new Error(`Didn't find a viem symbol for chainId: ${chainId}. Wire it up in 'src/chainIds.ts'!`);
@@ -39714,7 +39734,7 @@ function getExplicitRPC(chainId) {
   throw new Error(`Env '${env}' is not set. Please set it manually.`);
 }
 function getAlchemyRPC(chainId, alchemyKey2) {
-  const alchemyId = alchemyNetworkMap[chainId];
+  const alchemyId = alchemyNetworks[chainId];
   if (!alchemyId) throw new Error(`ChainId '${chainId}' is not supported by Alchemy.`);
   if (!alchemyKey2) throw new Error(`ChainId '${chainId}' is supported by Alchemy, but no 'alchemyKey' was provided.`);
   return `https://${alchemyId}.g.alchemy.com/v2/${alchemyKey2}`;
