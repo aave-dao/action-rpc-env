@@ -1,0 +1,19 @@
+.github/workflows/test.yml
+  s_3845b488e173ef::t_1aad21aa4cfb00 10-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "b0c9229f589c2aefc5133b38fd96fe17e2c63d0b",
+  "prompts": {},
+  "sessions": {
+    "s_3845b488e173ef": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "594728f2-447a-4783-9d12-e7d5283208db",
+        "model": "claude-opus-5"
+      },
+      "human_author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
