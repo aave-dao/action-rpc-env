@@ -1,5 +1,12 @@
 # Aave RPC ENV Changelog
 
+## [1.1.1](https://github.com/aave-dao/action-rpc-env/compare/v1.1.0...v1.1.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* bump toolbox to 0.6.1 so RPC_ARC is exported ([#16](https://github.com/aave-dao/action-rpc-env/issues/16)) ([619d553](https://github.com/aave-dao/action-rpc-env/commit/619d55342f12478a822f36ba2f8760fb78bf9d27))
+
 ## [1.1.0](https://github.com/aave-dao/action-rpc-env/compare/v1.0.0...v1.1.0) (2026-06-22)
 
 
