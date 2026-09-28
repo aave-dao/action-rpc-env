@@ -82,7 +82,7 @@ var init_size = __esm({
 var version;
 var init_version = __esm({
   "node_modules/viem/_esm/errors/version.js"() {
-    version = "2.45.1";
+    version = "2.56.9";
   }
 });
 
@@ -177,7 +177,7 @@ var init_base = __esm({
 });
 
 // node_modules/viem/_esm/errors/data.js
-var SliceOffsetOutOfBoundsError, SizeExceedsPaddingSizeError;
+var SliceOffsetOutOfBoundsError, SizeExceedsPaddingSizeError, InvalidBytesLengthError;
 var init_data = __esm({
   "node_modules/viem/_esm/errors/data.js"() {
     init_base();
@@ -189,6 +189,11 @@ var init_data = __esm({
     SizeExceedsPaddingSizeError = class extends BaseError {
       constructor({ size: size2, targetSize, type: type2 }) {
         super(`${type2.charAt(0).toUpperCase()}${type2.slice(1).toLowerCase()} size (${size2}) exceeds padding size (${targetSize}).`, { name: "SizeExceedsPaddingSizeError" });
+      }
+    };
+    InvalidBytesLengthError = class extends BaseError {
+      constructor({ size: size2, targetSize, type: type2 }) {
+        super(`${type2.charAt(0).toUpperCase()}${type2.slice(1).toLowerCase()} is expected to be ${targetSize} ${type2} long, but is ${size2} ${type2} long.`, { name: "InvalidBytesLengthError" });
       }
     };
   }
@@ -290,7 +295,7 @@ function hexToBigInt(hex, opts = {}) {
   const value = BigInt(hex);
   if (!signed)
     return value;
-  const size2 = (hex.length - 2) / 2;
+  const size2 = Math.ceil((hex.length - 2) / 2);
   const max = (1n << BigInt(size2) * 8n - 1n) - 1n;
   if (value <= max)
     return value;
@@ -819,18 +824,20 @@ var init_lru = __esm({
       }
       get(key) {
         const value = super.get(key);
-        if (super.has(key) && value !== void 0) {
-          this.delete(key);
+        if (super.has(key)) {
+          super.delete(key);
           super.set(key, value);
         }
         return value;
       }
       set(key, value) {
+        if (super.has(key))
+          super.delete(key);
         super.set(key, value);
         if (this.maxSize && this.size > this.maxSize) {
-          const firstKey = this.keys().next().value;
-          if (firstKey)
-            this.delete(firstKey);
+          const firstKey = super.keys().next().value;
+          if (firstKey !== void 0)
+            super.delete(firstKey);
         }
         return this;
       }
@@ -1154,23 +1161,10 @@ var init_cursor2 = __esm({
   }
 });
 
-// node_modules/viem/_esm/constants/unit.js
-var etherUnits, gweiUnits;
-var init_unit = __esm({
-  "node_modules/viem/_esm/constants/unit.js"() {
-    etherUnits = {
-      gwei: 9,
-      wei: 18
-    };
-    gweiUnits = {
-      ether: -9,
-      wei: 9
-    };
-  }
-});
-
-// node_modules/viem/_esm/utils/unit/formatUnits.js
-function formatUnits(value, decimals) {
+// node_modules/viem/_esm/utils/unit/Value.js
+function format(value, decimals = 0) {
+  if (!Number.isInteger(decimals) || decimals < 0)
+    throw new InvalidDecimalsError({ decimals });
   let display = value.toString();
   const negative = display.startsWith("-");
   if (negative)
@@ -1183,30 +1177,53 @@ function formatUnits(value, decimals) {
   fraction = fraction.replace(/(0+)$/, "");
   return `${negative ? "-" : ""}${integer || "0"}${fraction ? `.${fraction}` : ""}`;
 }
-var init_formatUnits = __esm({
-  "node_modules/viem/_esm/utils/unit/formatUnits.js"() {
+function formatEther(wei, unit = "wei") {
+  return format(wei, exponents.ether - exponents[unit]);
+}
+function formatGwei(wei, unit = "wei") {
+  return format(wei, exponents.gwei - exponents[unit]);
+}
+var exponents, InvalidDecimalsError;
+var init_Value = __esm({
+  "node_modules/viem/_esm/utils/unit/Value.js"() {
+    exponents = {
+      wei: 0,
+      gwei: 9,
+      szabo: 12,
+      finney: 15,
+      ether: 18
+    };
+    InvalidDecimalsError = class extends Error {
+      constructor({ decimals }) {
+        super(`\`decimals\` must be a non-negative integer. Got \`${decimals}\`.`);
+        Object.defineProperty(this, "name", {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: "Value.InvalidDecimalsError"
+        });
+      }
+    };
   }
 });
 
 // node_modules/viem/_esm/utils/unit/formatEther.js
-function formatEther(wei, unit = "wei") {
-  return formatUnits(wei, etherUnits[unit]);
+function formatEther2(wei, unit = "wei") {
+  return formatEther(wei, unit);
 }
 var init_formatEther = __esm({
   "node_modules/viem/_esm/utils/unit/formatEther.js"() {
-    init_unit();
-    init_formatUnits();
+    init_Value();
   }
 });
 
 // node_modules/viem/_esm/utils/unit/formatGwei.js
-function formatGwei(wei, unit = "wei") {
-  return formatUnits(wei, gweiUnits[unit]);
+function formatGwei2(wei, unit = "wei") {
+  return formatGwei(wei, unit);
 }
 var init_formatGwei = __esm({
   "node_modules/viem/_esm/utils/unit/formatGwei.js"() {
-    init_unit();
-    init_formatUnits();
+    init_Value();
   }
 });
 
@@ -1241,8 +1258,24 @@ function prettyStateOverride(stateOverride) {
     return val;
   }, "  State Override:\n").slice(0, -1);
 }
+var AccountStateConflictError, StateAssignmentConflictError;
 var init_stateOverride = __esm({
   "node_modules/viem/_esm/errors/stateOverride.js"() {
+    init_base();
+    AccountStateConflictError = class extends BaseError {
+      constructor({ address }) {
+        super(`State for account "${address}" is set multiple times.`, {
+          name: "AccountStateConflictError"
+        });
+      }
+    };
+    StateAssignmentConflictError = class extends BaseError {
+      constructor() {
+        super("state and stateDiff are set on the same account.", {
+          name: "StateAssignmentConflictError"
+        });
+      }
+    };
   }
 });
 
@@ -1312,12 +1345,12 @@ var init_contract = __esm({
         let prettyArgs = prettyPrint({
           from: account?.address,
           to: to2,
-          value: typeof value !== "undefined" && `${formatEther(value)} ${chain?.nativeCurrency?.symbol || "ETH"}`,
+          value: typeof value !== "undefined" && `${formatEther2(value)} ${chain?.nativeCurrency?.symbol || "ETH"}`,
           data,
           gas,
-          gasPrice: typeof gasPrice !== "undefined" && `${formatGwei(gasPrice)} gwei`,
-          maxFeePerGas: typeof maxFeePerGas !== "undefined" && `${formatGwei(maxFeePerGas)} gwei`,
-          maxPriorityFeePerGas: typeof maxPriorityFeePerGas !== "undefined" && `${formatGwei(maxPriorityFeePerGas)} gwei`,
+          gasPrice: typeof gasPrice !== "undefined" && `${formatGwei2(gasPrice)} gwei`,
+          maxFeePerGas: typeof maxFeePerGas !== "undefined" && `${formatGwei2(maxFeePerGas)} gwei`,
+          maxPriorityFeePerGas: typeof maxPriorityFeePerGas !== "undefined" && `${formatGwei2(maxPriorityFeePerGas)} gwei`,
           nonce
         });
         if (stateOverride) {
@@ -1375,7 +1408,7 @@ var init_node = __esm({
     });
     FeeCapTooHighError = class extends BaseError {
       constructor({ cause, maxFeePerGas } = {}) {
-        super(`The fee cap (\`maxFeePerGas\`${maxFeePerGas ? ` = ${formatGwei(maxFeePerGas)} gwei` : ""}) cannot be higher than the maximum allowed value (2^256-1).`, {
+        super(`The fee cap (\`maxFeePerGas\`${maxFeePerGas ? ` = ${formatGwei2(maxFeePerGas)} gwei` : ""}) cannot be higher than the maximum allowed value (2^256-1).`, {
           cause,
           name: "FeeCapTooHighError"
         });
@@ -1389,7 +1422,7 @@ var init_node = __esm({
     });
     FeeCapTooLowError = class extends BaseError {
       constructor({ cause, maxFeePerGas } = {}) {
-        super(`The fee cap (\`maxFeePerGas\`${maxFeePerGas ? ` = ${formatGwei(maxFeePerGas)}` : ""} gwei) cannot be lower than the block base fee.`, {
+        super(`The fee cap (\`maxFeePerGas\`${maxFeePerGas ? ` = ${formatGwei2(maxFeePerGas)}` : ""} gwei) cannot be lower than the block base fee.`, {
           cause,
           name: "FeeCapTooLowError"
         });
@@ -1508,7 +1541,7 @@ var init_node = __esm({
     TipAboveFeeCapError = class extends BaseError {
       constructor({ cause, maxPriorityFeePerGas, maxFeePerGas } = {}) {
         super([
-          `The provided tip (\`maxPriorityFeePerGas\`${maxPriorityFeePerGas ? ` = ${formatGwei(maxPriorityFeePerGas)} gwei` : ""}) cannot be higher than the fee cap (\`maxFeePerGas\`${maxFeePerGas ? ` = ${formatGwei(maxFeePerGas)} gwei` : ""}).`
+          `The provided tip (\`maxPriorityFeePerGas\`${maxPriorityFeePerGas ? ` = ${formatGwei2(maxPriorityFeePerGas)} gwei` : ""}) cannot be higher than the fee cap (\`maxFeePerGas\`${maxFeePerGas ? ` = ${formatGwei2(maxFeePerGas)} gwei` : ""}).`
         ].join("\n"), {
           cause,
           name: "TipAboveFeeCapError"
@@ -1588,8 +1621,8 @@ var init_getNodeError = __esm({
 });
 
 // node_modules/viem/_esm/utils/formatters/extract.js
-function extract(value_, { format }) {
-  if (!format)
+function extract(value_, { format: format2 }) {
+  if (!format2)
     return {};
   const value = {};
   function extract_(formatted2) {
@@ -1601,7 +1634,7 @@ function extract(value_, { format }) {
         extract_(formatted2[key]);
     }
   }
-  const formatted = format(value_ || {});
+  const formatted = format2(value_ || {});
   extract_(formatted);
   return value;
 }
@@ -1611,12 +1644,12 @@ var init_extract = __esm({
 });
 
 // node_modules/viem/_esm/utils/formatters/formatter.js
-function defineFormatter(type2, format) {
+function defineFormatter(type2, format2) {
   return ({ exclude, format: overrides }) => {
     return {
       exclude,
       format: (args, action) => {
-        const formatted = format(args, action);
+        const formatted = format2(args, action);
         if (exclude) {
           for (const key of exclude) {
             delete formatted[key];
@@ -1701,6 +1734,68 @@ var init_transactionRequest = __esm({
       eip7702: "0x4"
     };
     defineTransactionRequest = /* @__PURE__ */ defineFormatter("transactionRequest", formatTransactionRequest);
+  }
+});
+
+// node_modules/viem/_esm/utils/stateOverride.js
+function serializeStateMapping(stateMapping) {
+  if (!stateMapping || stateMapping.length === 0)
+    return void 0;
+  return stateMapping.reduce((acc, { slot, value }) => {
+    if (slot.length !== 66)
+      throw new InvalidBytesLengthError({
+        size: slot.length,
+        targetSize: 66,
+        type: "hex"
+      });
+    if (value.length !== 66)
+      throw new InvalidBytesLengthError({
+        size: value.length,
+        targetSize: 66,
+        type: "hex"
+      });
+    acc[slot] = value;
+    return acc;
+  }, {});
+}
+function serializeAccountStateOverride(parameters) {
+  const { balance, nonce, state, stateDiff, code: code2 } = parameters;
+  const rpcAccountStateOverride = {};
+  if (code2 !== void 0)
+    rpcAccountStateOverride.code = code2;
+  if (balance !== void 0)
+    rpcAccountStateOverride.balance = numberToHex(balance);
+  if (nonce !== void 0)
+    rpcAccountStateOverride.nonce = numberToHex(nonce);
+  if (state !== void 0)
+    rpcAccountStateOverride.state = serializeStateMapping(state);
+  if (stateDiff !== void 0) {
+    if (rpcAccountStateOverride.state)
+      throw new StateAssignmentConflictError();
+    rpcAccountStateOverride.stateDiff = serializeStateMapping(stateDiff);
+  }
+  return rpcAccountStateOverride;
+}
+function serializeStateOverride(parameters) {
+  if (!parameters)
+    return void 0;
+  const rpcStateOverride = {};
+  for (const { address, ...accountState } of parameters) {
+    if (!isAddress(address, { strict: false }))
+      throw new InvalidAddressError({ address });
+    if (rpcStateOverride[address])
+      throw new AccountStateConflictError({ address });
+    rpcStateOverride[address] = serializeAccountStateOverride(accountState);
+  }
+  return rpcStateOverride;
+}
+var init_stateOverride2 = __esm({
+  "node_modules/viem/_esm/utils/stateOverride.js"() {
+    init_address();
+    init_data();
+    init_stateOverride();
+    init_isAddress();
+    init_toHex();
   }
 });
 
@@ -33518,6 +33613,9 @@ function formatTransaction(transaction, _2) {
     ...transaction,
     blockHash: transaction.blockHash ? transaction.blockHash : null,
     blockNumber: transaction.blockNumber ? BigInt(transaction.blockNumber) : null,
+    ...transaction.blockTimestamp != null && {
+      blockTimestamp: BigInt(transaction.blockTimestamp)
+    },
     chainId: transaction.chainId ? hexToNumber(transaction.chainId) : void 0,
     gas: transaction.gas ? BigInt(transaction.gas) : void 0,
     gasPrice: transaction.gasPrice ? BigInt(transaction.gasPrice) : void 0,
@@ -35306,6 +35404,8 @@ var formatters2 = {
   transactionReceipt: /* @__PURE__ */ defineTransactionReceipt({
     format(args) {
       return {
+        ...args.depositNonce ? { depositNonce: hexToBigInt(args.depositNonce) } : {},
+        ...args.depositReceiptVersion ? { depositReceiptVersion: hexToNumber(args.depositReceiptVersion) } : {},
         l1GasPrice: args.l1GasPrice ? hexToBigInt(args.l1GasPrice) : null,
         l1GasUsed: args.l1GasUsed ? hexToBigInt(args.l1GasUsed) : null,
         l1Fee: args.l1Fee ? hexToBigInt(args.l1Fee) : null,
@@ -35424,6 +35524,40 @@ var arbitrumSepolia = /* @__PURE__ */ defineChain({
     }
   },
   testnet: true
+});
+
+// node_modules/viem/_esm/chains/definitions/arc.js
+var arc = /* @__PURE__ */ defineChain({
+  id: 5042,
+  name: "Arc",
+  nativeCurrency: {
+    name: "USDC",
+    symbol: "USDC",
+    decimals: 18
+  },
+  rpcUrls: {
+    default: {
+      http: [
+        "https://rpc.mainnet.arc.io",
+        "https://rpc.blockdaemon.mainnet.arc.io",
+        "https://rpc.drpc.mainnet.arc.io",
+        "https://rpc.quicknode.mainnet.arc.io"
+      ]
+    }
+  },
+  blockExplorers: {
+    default: {
+      name: "Arc Explorer",
+      url: "https://explorer.arc.io",
+      apiUrl: "https://explorer.arc.io/api/v2"
+    }
+  },
+  contracts: {
+    multicall3: {
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+      blockCreated: 0
+    }
+  }
 });
 
 // node_modules/viem/_esm/chains/definitions/avalanche.js
@@ -36106,6 +36240,7 @@ init_toHex();
 init_getCallError();
 init_extract();
 init_transactionRequest();
+init_stateOverride2();
 init_assertRequest();
 async function estimateGas(client, args) {
   const { account: account_ = client.account } = args;
@@ -36113,13 +36248,13 @@ async function estimateGas(client, args) {
     throw new AccountNotFoundError();
   const account = parseAccount(account_);
   try {
-    const { accessList, blockNumber, blockTag, data, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, nonce, to: to2, value, ...rest } = args;
+    const { accessList, blockNumber, blockTag, data, gas, gasPrice, maxFeePerGas, maxPriorityFeePerGas, nonce, stateOverride, to: to2, value, ...rest } = args;
     const blockNumberHex = typeof blockNumber === "bigint" ? numberToHex(blockNumber) : void 0;
     const block = blockNumberHex || blockTag;
     assertRequest(args);
     const chainFormat = client.chain?.formatters?.transactionRequest?.format;
-    const format = chainFormat || formatTransactionRequest;
-    const request = format({
+    const format2 = chainFormat || formatTransactionRequest;
+    const request = format2({
       // Pick out extra data that might exist on the chain's transaction request type.
       ...extract(rest, { format: chainFormat }),
       account,
@@ -36133,9 +36268,10 @@ async function estimateGas(client, args) {
       to: to2,
       value
     }, "estimateGas");
+    const rpcStateOverride = serializeStateOverride(stateOverride);
     const { baseFeePerGas, gasLimit, priorityFeePerGas } = await client.request({
       method: "linea_estimateGas",
-      params: block ? [request, block] : [request]
+      params: rpcStateOverride ? block ? [request, block, rpcStateOverride] : [request, rpcStateOverride] : block ? [request, block] : [request]
     });
     return {
       baseFeePerGas: BigInt(baseFeePerGas),
@@ -36235,7 +36371,7 @@ var mainnet = /* @__PURE__ */ defineChain({
   blockTime: 12e3,
   rpcUrls: {
     default: {
-      http: ["https://eth.merkle.io"]
+      http: ["https://ethereum.reth.rs/rpc"]
     }
   },
   blockExplorers: {
@@ -36285,7 +36421,9 @@ var mantle = /* @__PURE__ */ defineChain({
 });
 
 // node_modules/viem/_esm/chains/definitions/megaeth.js
+var sourceId6 = 1;
 var megaeth = /* @__PURE__ */ defineChain({
+  ...chainConfig2,
   id: 4326,
   blockTime: 1e3,
   name: "MegaETH",
@@ -36302,16 +36440,41 @@ var megaeth = /* @__PURE__ */ defineChain({
   },
   blockExplorers: {
     default: {
+      name: "Etherscan",
+      url: "https://mega.etherscan.io",
+      apiUrl: "https://api.etherscan.io/v2/api"
+    },
+    blockscout: {
       name: "Blockscout",
       url: "https://megaeth.blockscout.com",
       apiUrl: "https://megaeth.blockscout.com/api"
     }
   },
   contracts: {
+    ...chainConfig2.contracts,
+    disputeGameFactory: {
+      [sourceId6]: {
+        address: "0x8546840adF796875cD9AAcc5B3B048f6B2c9D563"
+      }
+    },
     multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11"
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+      blockCreated: 0
+    },
+    portal: {
+      [sourceId6]: {
+        address: "0x7f82f57F0Dd546519324392e408b01fcC7D709e8",
+        blockCreated: 21644285
+      }
+    },
+    l1StandardBridge: {
+      [sourceId6]: {
+        address: "0x0CA3A2FBC3D770b578223FBB6b062fa875a2eE75",
+        blockCreated: 21644285
+      }
     }
-  }
+  },
+  sourceId: sourceId6
 });
 
 // node_modules/viem/_esm/chains/definitions/metis.js
@@ -36371,13 +36534,13 @@ var monad = /* @__PURE__ */ defineChain({
   },
   blockExplorers: {
     default: {
-      name: "MonadVision",
-      url: "https://monadvision.com"
-    },
-    monadscan: {
       name: "Monadscan",
       url: "https://monadscan.com",
-      apiUrl: "https://api.monadscan.com/api"
+      apiUrl: "https://api.etherscan.io/v2/api?chainid=143"
+    },
+    monadvision: {
+      name: "MonadVision",
+      url: "https://monadvision.com"
     }
   },
   testnet: false,
@@ -36390,7 +36553,7 @@ var monad = /* @__PURE__ */ defineChain({
 });
 
 // node_modules/viem/_esm/chains/definitions/optimism.js
-var sourceId6 = 1;
+var sourceId7 = 1;
 var optimism = /* @__PURE__ */ defineChain({
   ...chainConfig2,
   id: 10,
@@ -36411,12 +36574,12 @@ var optimism = /* @__PURE__ */ defineChain({
   contracts: {
     ...chainConfig2.contracts,
     disputeGameFactory: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0xe5965Ab5962eDc7477C8520243A95517CD252fA9"
       }
     },
     l2OutputOracle: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0xdfe97868233d1aa22e815a266982f2cf17685a27"
       }
     },
@@ -36425,21 +36588,21 @@ var optimism = /* @__PURE__ */ defineChain({
       blockCreated: 4286263
     },
     portal: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0xbEb5Fc579115071764c7423A4f12eDde41f106Ed"
       }
     },
     l1StandardBridge: {
-      [sourceId6]: {
+      [sourceId7]: {
         address: "0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1"
       }
     }
   },
-  sourceId: sourceId6
+  sourceId: sourceId7
 });
 
 // node_modules/viem/_esm/chains/definitions/optimismSepolia.js
-var sourceId7 = 11155111;
+var sourceId8 = 11155111;
 var optimismSepolia = /* @__PURE__ */ defineChain({
   ...chainConfig2,
   id: 11155420,
@@ -36460,12 +36623,12 @@ var optimismSepolia = /* @__PURE__ */ defineChain({
   contracts: {
     ...chainConfig2.contracts,
     disputeGameFactory: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0x05F9613aDB30026FFd634f38e5C4dFd30a197Fa1"
       }
     },
     l2OutputOracle: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0x90E9c4f8a994a250F6aEfd61CAFb4F2e895D458F"
       }
     },
@@ -36474,18 +36637,18 @@ var optimismSepolia = /* @__PURE__ */ defineChain({
       blockCreated: 1620204
     },
     portal: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0x16Fc5058F25648194471939df75CF27A2fdC48BC"
       }
     },
     l1StandardBridge: {
-      [sourceId7]: {
+      [sourceId8]: {
         address: "0xFBb0621E0B23b5478B630BD55a5f21f67730B0F1"
       }
     }
   },
   testnet: true,
-  sourceId: sourceId7
+  sourceId: sourceId8
 });
 
 // node_modules/viem/_esm/chains/definitions/plasma.js
@@ -36525,7 +36688,7 @@ var polygon = /* @__PURE__ */ defineChain({
   nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
   rpcUrls: {
     default: {
-      http: ["https://polygon-rpc.com"]
+      http: ["https://polygon.drpc.org"]
     }
   },
   blockExplorers: {
@@ -36550,7 +36713,7 @@ var polygonAmoy = /* @__PURE__ */ defineChain({
   nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
   rpcUrls: {
     default: {
-      http: ["https://rpc-amoy.polygon.technology"]
+      http: ["https://polygon-amoy.drpc.org"]
     }
   },
   blockExplorers: {
@@ -36679,7 +36842,7 @@ var sepolia = /* @__PURE__ */ defineChain({
 });
 
 // node_modules/viem/_esm/chains/definitions/soneium.js
-var sourceId8 = 1;
+var sourceId9 = 1;
 var soneium = /* @__PURE__ */ defineChain({
   ...chainConfig2,
   id: 1868,
@@ -36700,23 +36863,23 @@ var soneium = /* @__PURE__ */ defineChain({
   contracts: {
     ...chainConfig2.contracts,
     disputeGameFactory: {
-      [sourceId8]: {
+      [sourceId9]: {
         address: "0x512a3d2c7a43bd9261d2b8e8c9c70d4bd4d503c0"
       }
     },
     l2OutputOracle: {
-      [sourceId8]: {
+      [sourceId9]: {
         address: "0x0000000000000000000000000000000000000000"
       }
     },
     portal: {
-      [sourceId8]: {
+      [sourceId9]: {
         address: "0x88e529a6ccd302c948689cd5156c83d4614fae92",
         blockCreated: 7061266
       }
     },
     l1StandardBridge: {
-      [sourceId8]: {
+      [sourceId9]: {
         address: "0xeb9bf100225c214efc3e7c651ebbadcf85177607",
         blockCreated: 7061266
       }
@@ -36726,7 +36889,7 @@ var soneium = /* @__PURE__ */ defineChain({
       blockCreated: 1
     }
   },
-  sourceId: sourceId8
+  sourceId: sourceId9
 });
 
 // node_modules/viem/_esm/chains/definitions/sonic.js
@@ -36766,8 +36929,9 @@ var xLayer = /* @__PURE__ */ defineChain({
     name: "OKB",
     symbol: "OKB"
   },
+  blockTime: 1e3,
   rpcUrls: {
-    default: { http: ["https://rpc.xlayer.tech"] }
+    default: { http: ["https://xlayerrpc.okx.com"] }
   },
   blockExplorers: {
     default: {
@@ -36811,7 +36975,8 @@ var zksync = /* @__PURE__ */ defineChain({
   },
   contracts: {
     multicall3: {
-      address: "0xF9cda624FBC7e059355ce98a31693d299FACd963"
+      address: "0xF9cda624FBC7e059355ce98a31693d299FACd963",
+      blockCreated: 3908235
     },
     erc6492Verifier: {
       address: "0xfB688330379976DA81eB64Fe4BF50d7401763B9C",
@@ -39407,21 +39572,6 @@ var __exportAll = (all, no_symbols) => {
   }
   return target;
 };
-var arc = defineChain({
-  id: 5042,
-  name: "Arc",
-  nativeCurrency: {
-    name: "USDC",
-    symbol: "USDC",
-    decimals: 18
-  },
-  rpcUrls: { default: { http: [] } },
-  blockExplorers: { default: {
-    name: "Arc Explorer",
-    url: "https://explorer.arc.io"
-  } },
-  contracts: { multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" } }
-});
 var ChainId = {
   celo: celo.id,
   mainnet: mainnet.id,
@@ -39471,6 +39621,7 @@ var ChainId = {
 var alchemyNetworkMap = {
   1: "eth-mainnet",
   10: "opt-mainnet",
+  25: "cronos-mainnet",
   30: "rootstock-mainnet",
   31: "rootstock-testnet",
   56: "bnb-mainnet",
@@ -39484,8 +39635,10 @@ var alchemyNetworkMap = {
   204: "opbnb-mainnet",
   232: "lens-mainnet",
   252: "frax-mainnet",
+  288: "boba-mainnet",
   300: "zksync-sepolia",
   324: "zksync-mainnet",
+  338: "cronos-testnet",
   360: "shape-mainnet",
   480: "worldchain-mainnet",
   545: "flow-testnet",
@@ -39498,7 +39651,6 @@ var alchemyNetworkMap = {
   999: "hyperliquid-mainnet",
   1001: "kaia-testnet",
   1088: "metis-mainnet",
-  1101: "polygonzkevm-mainnet",
   1284: "moonbeam-mainnet",
   1301: "unichain-sepolia",
   1315: "story-aeneid",
@@ -39513,20 +39665,19 @@ var alchemyNetworkMap = {
   1952: "xlayer-testnet",
   2020: "ronin-mainnet",
   2201: "stable-testnet",
-  2442: "polygonzkevm-cardona",
   2523: "frax-sepolia",
   2741: "abstract-mainnet",
-  3636: "botanix-testnet",
-  3637: "botanix-mainnet",
   4114: "citrea-mainnet",
   4153: "rise-mainnet",
   4157: "crossfi-testnet",
   4158: "crossfi-mainnet",
   4217: "tempo-mainnet",
   4326: "megaeth-mainnet",
+  4663: "robinhood-mainnet",
   4801: "worldchain-sepolia",
   5e3: "mantle-mainnet",
   5003: "mantle-sepolia",
+  5042: "arc-mainnet",
   5115: "citrea-testnet",
   5330: "superseed-mainnet",
   5371: "settlus-mainnet",
@@ -39545,6 +39696,8 @@ var alchemyNetworkMap = {
   11011: "shape-sepolia",
   11124: "abstract-testnet",
   14601: "sonic-testnet",
+  20310: "alpen-testnet",
+  28882: "boba-sepolia",
   33111: "apechain-curtis",
   33139: "apechain-mainnet",
   34443: "mode-mainnet",
@@ -39568,11 +39721,10 @@ var alchemyNetworkMap = {
   80094: "berachain-mainnet",
   81457: "blast-mainnet",
   84532: "base-sepolia",
+  91342: "giwa-sepolia",
   99999: "adi-testnet",
   202601: "ronin-saigon",
   421614: "arb-sepolia",
-  510525: "clankermon-mainnet",
-  534351: "scroll-sepolia",
   534352: "scroll-mainnet",
   560048: "eth-hoodi",
   685685: "gensyn-testnet",
@@ -39593,7 +39745,6 @@ var alchemyNetworkMap = {
   11155931: "rise-testnet",
   168587773: "blast-sepolia",
   351243127: "xmtp-ropsten",
-  666666666: "degen-mainnet",
   728126428: "tron-mainnet",
   999999999: "zora-sepolia",
   3448148188: "tron-testnet",
@@ -39639,6 +39790,7 @@ var quicknodeNetworkMap = {
   4801: "worldchain-sepolia",
   5e3: "mantle-mainnet",
   5003: "mantle-sepolia",
+  5042: "arc-mainnet",
   7560: "cyber-mainnet",
   8217: "kaia-mainnet",
   8333: "b3-mainnet",
@@ -39669,6 +39821,7 @@ var quicknodeNetworkMap = {
   560048: "ethereum-hoodi",
   660279: "xai-mainnet",
   763373: "ink-sepolia",
+  5042002: "arc-testnet",
   7777777: "zora-mainnet",
   11155111: "ethereum-sepolia",
   11155420: "optimism-sepolia",
@@ -39694,14 +39847,10 @@ var publicRPCs = {
   [ChainId.ink]: "https://ink-public.nodies.app",
   [ChainId.ink_sepolia]: "https://rpc-gel-sepolia.inkonchain.com",
   [ChainId.megaeth]: "https://mainnet.megaeth.com/rpc",
-  [ChainId.monad]: "https://monad-mainnet.drpc.org"
+  [ChainId.monad]: "https://monad-mainnet.drpc.org",
+  [ChainId.arc]: "https://rpc.mainnet.arc.io"
 };
-var manualAlchemyNetworkMap = { [ChainId.arc]: "arc-mainnet" };
-var alchemyNetworks = {
-  ...alchemyNetworkMap,
-  ...manualAlchemyNetworkMap
-};
-Object.values(ChainId).filter((id) => alchemyNetworks[id]);
+Object.values(ChainId).filter((id) => alchemyNetworkMap[id]);
 var getNetworkEnv = (chainId) => {
   const symbol = Object.entries(ChainId).find(([, value]) => value === chainId)?.[0];
   if (!symbol) throw new Error(`Didn't find a viem symbol for chainId: ${chainId}. Wire it up in 'src/chainIds.ts'!`);
@@ -39713,7 +39862,7 @@ function getExplicitRPC(chainId) {
   throw new Error(`Env '${env}' is not set. Please set it manually.`);
 }
 function getAlchemyRPC(chainId, alchemyKey2) {
-  const alchemyId = alchemyNetworks[chainId];
+  const alchemyId = alchemyNetworkMap[chainId];
   if (!alchemyId) throw new Error(`ChainId '${chainId}' is not supported by Alchemy.`);
   if (!alchemyKey2) throw new Error(`ChainId '${chainId}' is supported by Alchemy, but no 'alchemyKey' was provided.`);
   return `https://${alchemyId}.g.alchemy.com/v2/${alchemyKey2}`;
