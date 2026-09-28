@@ -1,5 +1,12 @@
 # Aave RPC ENV Changelog
 
+## [1.1.2](https://github.com/aave-dao/action-rpc-env/compare/v1.1.1...v1.1.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* bump toolbox to 0.8.1 for arc quicknode and public rpc ([#22](https://github.com/aave-dao/action-rpc-env/issues/22)) ([525d29e](https://github.com/aave-dao/action-rpc-env/commit/525d29e13095b99caf1fb52b4771f524119f476f))
+
 ## [1.1.1](https://github.com/aave-dao/action-rpc-env/compare/v1.1.0...v1.1.1) (2026-09-10)
 
 
