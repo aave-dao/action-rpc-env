@@ -42864,6 +42864,19 @@ function toCommandValue(input) {
   }
   return JSON.stringify(input);
 }
+function toCommandProperties(annotationProperties) {
+  if (!Object.keys(annotationProperties).length) {
+    return {};
+  }
+  return {
+    title: annotationProperties.title,
+    file: annotationProperties.file,
+    line: annotationProperties.startLine,
+    endLine: annotationProperties.endLine,
+    col: annotationProperties.startColumn,
+    endColumn: annotationProperties.endColumn
+  };
+}
 
 // node_modules/@actions/core/lib/command.js
 function issueCommand(command, properties, message2) {
@@ -43021,18 +43034,27 @@ function getInput(name2, options) {
 function debug(message2) {
   issueCommand("debug", {}, message2);
 }
+function warning(message2, properties = {}) {
+  issueCommand("warning", toCommandProperties(properties), message2 instanceof Error ? message2.toString() : message2);
+}
 
 // src/action.ts
-var alchemyKey = getInput("ALCHEMY_API_KEY") !== "" ? getInput("ALCHEMY_API_KEY") : void 0;
-var quicknodeToken = getInput("QUICKNODE_TOKEN") !== "" ? getInput("QUICKNODE_TOKEN") : "5196b99cdae04535ecd62906c3b618876686618a";
-var quicknodeEndpointName = getInput("QUICKNODE_ENDPOINT_NAME") !== "" ? getInput("QUICKNODE_ENDPOINT_NAME") : "quaint-still-liquid";
+var alchemyKey = getInput("ALCHEMY_API_KEY") || void 0;
+var quicknodeToken = getInput("QUICKNODE_TOKEN") || void 0;
+var quicknodeEndpointName = getInput("QUICKNODE_ENDPOINT_NAME") || void 0;
 for (const chainId of Object.values(ChainId)) {
   const envVarName = getNetworkEnv(chainId);
+  const url = getRPCUrl(chainId, {
+    alchemyKey,
+    quicknodeToken,
+    quicknodeEndpointName
+  });
+  if (!url) {
+    warning(`No rpc available for ${envVarName} (chainId ${chainId})`);
+    continue;
+  }
   debug(`Setting ${envVarName}`);
-  exportVariable(
-    envVarName,
-    getRPCUrl(chainId, { alchemyKey, quicknodeToken, quicknodeEndpointName })
-  );
+  exportVariable(envVarName, url);
 }
 /*! Bundled license information:
 
