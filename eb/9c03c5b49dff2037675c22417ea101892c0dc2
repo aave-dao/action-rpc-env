@@ -1,0 +1,25 @@
+package.json
+  s_1059fc2bdefe03::t_5110378c0ca4c3 18
+dist/action.js
+  s_1059fc2bdefe03::t_5110378c0ca4c3 39854-39866,39868-39875,39878-39880,39883,39885
+dist/action.mjs
+  s_1059fc2bdefe03::t_5110378c0ca4c3 39833-39845,39847-39854,39857-39859,39862,39864
+package-lock.json
+  s_1059fc2bdefe03::t_fdcb24b05f7557 12,22-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eb9c03c5b49dff2037675c22417ea101892c0dc2",
+  "prompts": {},
+  "sessions": {
+    "s_1059fc2bdefe03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0679faad-f76b-4db6-9cab-a237146407ed",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "DhairyaSethi <55102840+DhairyaSethi@users.noreply.github.com>"
+    }
+  }
+}
