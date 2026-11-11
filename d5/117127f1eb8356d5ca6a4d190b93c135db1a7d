@@ -1,0 +1,23 @@
+dist/action.js
+  s_8e1a9c213ec339::t_fb2f8197debe2d 43030
+dist/action.mjs
+  s_8e1a9c213ec339::t_5c4d44da3c65c0 43009
+src/action.ts
+  s_8e1a9c213ec339::t_0f9f3fa091bb83 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d5117127f1eb8356d5ca6a4d190b93c135db1a7d",
+  "prompts": {},
+  "sessions": {
+    "s_8e1a9c213ec339": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c12a5e16-5348-486c-ae08-dd44c70a5c02",
+        "model": "claude-fable-5-2"
+      },
+      "human_author": "AlbertoCentonze <11707683+AlbertoCentonze@users.noreply.github.com>"
+    }
+  }
+}
