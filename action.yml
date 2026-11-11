@@ -4,12 +4,6 @@ inputs:
   ALCHEMY_API_KEY:
     description: "Alchemy API key"
     required: false
-  QUICKNODE_TOKEN:
-    description: "Quicknode token"
-    required: false
-  QUICKNODE_ENDPOINT_NAME:
-    description: "Quicknode endpoint name"
-    required: false
 
 runs:
   using: "node20"

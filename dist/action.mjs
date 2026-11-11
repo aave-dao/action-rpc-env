@@ -43003,15 +43003,10 @@ function debug(message2) {
 
 // src/action.ts
 var alchemyKey = getInput("ALCHEMY_API_KEY") !== "" ? getInput("ALCHEMY_API_KEY") : void 0;
-var quicknodeToken = getInput("QUICKNODE_TOKEN") !== "" ? getInput("QUICKNODE_TOKEN") : "5196b99cdae04535ecd62906c3b618876686618a";
-var quicknodeEndpointName = getInput("QUICKNODE_ENDPOINT_NAME") !== "" ? getInput("QUICKNODE_ENDPOINT_NAME") : "quaint-still-liquid";
 for (const chainId of Object.values(ChainId)) {
   const envVarName = getNetworkEnv(chainId);
   debug(`Setting ${envVarName}`);
-  exportVariable(
-    envVarName,
-    getRPCUrl(chainId, { alchemyKey, quicknodeToken, quicknodeEndpointName })
-  );
+  exportVariable(envVarName, getRPCUrl(chainId, { alchemyKey }));
 }
 /*! Bundled license information:
 
