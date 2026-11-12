@@ -1,5 +1,17 @@
 # Aave RPC ENV Changelog
 
+## [1.1.2](https://github.com/aave-dao/action-rpc-env/compare/v1.1.1...v1.1.2) (2026-11-12)
+
+
+### Bug Fixes
+
+* bump toolbox to 0.8.1 for arc quicknode and public rpc ([#22](https://github.com/aave-dao/action-rpc-env/issues/22)) ([525d29e](https://github.com/aave-dao/action-rpc-env/commit/525d29e13095b99caf1fb52b4771f524119f476f))
+* bump toolbox to 0.8.2 for reachable public rpcs ([eb9c03c](https://github.com/aave-dao/action-rpc-env/commit/eb9c03c5b49dff2037675c22417ea101892c0dc2))
+* bump toolbox to 0.8.4 for archive-capable public rpcs ([371661f](https://github.com/aave-dao/action-rpc-env/commit/371661fdbe8ce397c071539a957ff81fa31623fe))
+* bump toolbox to 0.8.4 for archive-capable public rpcs ([5d933d3](https://github.com/aave-dao/action-rpc-env/commit/5d933d3cf739ab8a0083422f53434910faeb476d))
+* drop disabled quicknode default and warn on chains without rpc ([8bdbcc3](https://github.com/aave-dao/action-rpc-env/commit/8bdbcc3d6f2ab70ac906738a6bcbeaf464eb7655))
+* drop disabled quicknode default and warn on chains without rpc ([6265386](https://github.com/aave-dao/action-rpc-env/commit/6265386d27f202a7c48a8a2e2b48553ac7819512))
+
 ## [1.1.1](https://github.com/aave-dao/action-rpc-env/compare/v1.1.0...v1.1.1) (2026-09-10)
 
 
