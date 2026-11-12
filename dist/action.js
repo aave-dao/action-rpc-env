@@ -39851,24 +39851,38 @@ var quicknodeNetworkMap = {
   37714555429: "xai-testnet"
 };
 var publicRPCs = {
-  [ChainId.mainnet]: "https://eth.llamarpc.com",
-  [ChainId.polygon]: "https://polygon.llamarpc.com",
-  [ChainId.arbitrum]: "https://polygon.llamarpc.com",
-  [ChainId.base]: "https://base.llamarpc.com",
-  [ChainId.bnb]: "https://binance.llamarpc.com",
-  [ChainId.metis]: "https://andromeda.metis.io/?owner=1088",
-  [ChainId.gnosis]: "https://rpc.ankr.com/gnosis",
-  [ChainId.scroll]: "https://rpc.scroll.io",
-  [ChainId.zksync]: "https://mainnet.era.zksync.io",
-  [ChainId.fantom]: "https://rpc.ftm.tools",
+  [ChainId.celo]: "https://forno.celo.org",
+  [ChainId.mainnet]: "https://ethereum-rpc.publicnode.com",
+  [ChainId.polygon]: "https://polygon-bor-rpc.publicnode.com",
+  [ChainId.polygon_amoy]: "https://polygon-amoy-bor-rpc.publicnode.com",
   [ChainId.avalanche]: "https://api.avax.network/ext/bc/C/rpc",
+  [ChainId.avalanche_fuji]: "https://api.avax-test.network/ext/bc/C/rpc",
+  [ChainId.arbitrum]: "https://arb1.arbitrum.io/rpc",
+  [ChainId.arbitrum_sepolia]: "https://sepolia-rollup.arbitrum.io/rpc",
+  [ChainId.fantom]: "https://rpcapi.fantom.network",
+  [ChainId.optimism]: "https://mainnet.optimism.io",
+  [ChainId.optimism_sepolia]: "https://sepolia.optimism.io",
+  [ChainId.harmony]: "https://api.harmony.one",
+  [ChainId.sepolia]: "https://ethereum-sepolia-rpc.publicnode.com",
+  [ChainId.scroll]: "https://rpc.scroll.io",
+  [ChainId.sonic]: "https://rpc.soniclabs.com",
+  [ChainId.mantle]: "https://rpc.mantle.xyz",
+  [ChainId.metis]: "https://andromeda.metis.io/?owner=1088",
+  [ChainId.base]: "https://mainnet.base.org",
+  [ChainId.base_sepolia]: "https://sepolia.base.org",
+  [ChainId.bnb]: "https://bsc-dataseed.bnbchain.org",
+  [ChainId.gnosis]: "https://rpc.gnosischain.com",
+  [ChainId.zkEVM]: "https://zkevm-rpc.com",
+  [ChainId.zksync]: "https://mainnet.era.zksync.io",
   [ChainId.linea]: "https://rpc.linea.build",
+  [ChainId.ink]: "https://rpc-gel.inkonchain.com",
+  [ChainId.ink_sepolia]: "https://rpc-gel-sepolia.inkonchain.com",
+  [ChainId.soneium]: "https://rpc.soneium.org",
   [ChainId.bob]: "https://rpc.gobob.xyz",
   [ChainId.plasma]: "https://rpc.plasma.to",
-  [ChainId.ink]: "https://ink-public.nodies.app",
-  [ChainId.ink_sepolia]: "https://rpc-gel-sepolia.inkonchain.com",
+  [ChainId.xLayer]: "https://rpc.xlayer.tech",
   [ChainId.megaeth]: "https://mainnet.megaeth.com/rpc",
-  [ChainId.monad]: "https://monad-mainnet.drpc.org",
+  [ChainId.monad]: "https://rpc.monad.xyz",
   [ChainId.arc]: "https://rpc.mainnet.arc.io"
 };
 Object.values(ChainId).filter((id) => alchemyNetworkMap[id]);
@@ -42864,6 +42878,19 @@ function toCommandValue(input) {
   }
   return JSON.stringify(input);
 }
+function toCommandProperties(annotationProperties) {
+  if (!Object.keys(annotationProperties).length) {
+    return {};
+  }
+  return {
+    title: annotationProperties.title,
+    file: annotationProperties.file,
+    line: annotationProperties.startLine,
+    endLine: annotationProperties.endLine,
+    col: annotationProperties.startColumn,
+    endColumn: annotationProperties.endColumn
+  };
+}
 
 // node_modules/@actions/core/lib/command.js
 function issueCommand(command, properties, message2) {
@@ -43021,18 +43048,27 @@ function getInput(name2, options) {
 function debug(message2) {
   issueCommand("debug", {}, message2);
 }
+function warning(message2, properties = {}) {
+  issueCommand("warning", toCommandProperties(properties), message2 instanceof Error ? message2.toString() : message2);
+}
 
 // src/action.ts
-var alchemyKey = getInput("ALCHEMY_API_KEY") !== "" ? getInput("ALCHEMY_API_KEY") : void 0;
-var quicknodeToken = getInput("QUICKNODE_TOKEN") !== "" ? getInput("QUICKNODE_TOKEN") : "5196b99cdae04535ecd62906c3b618876686618a";
-var quicknodeEndpointName = getInput("QUICKNODE_ENDPOINT_NAME") !== "" ? getInput("QUICKNODE_ENDPOINT_NAME") : "quaint-still-liquid";
+var alchemyKey = getInput("ALCHEMY_API_KEY") || void 0;
+var quicknodeToken = getInput("QUICKNODE_TOKEN") || void 0;
+var quicknodeEndpointName = getInput("QUICKNODE_ENDPOINT_NAME") || void 0;
 for (const chainId of Object.values(ChainId)) {
   const envVarName = getNetworkEnv(chainId);
+  const url = getRPCUrl(chainId, {
+    alchemyKey,
+    quicknodeToken,
+    quicknodeEndpointName
+  });
+  if (!url) {
+    warning(`No rpc available for ${envVarName} (chainId ${chainId})`);
+    continue;
+  }
   debug(`Setting ${envVarName}`);
-  exportVariable(
-    envVarName,
-    getRPCUrl(chainId, { alchemyKey, quicknodeToken, quicknodeEndpointName })
-  );
+  exportVariable(envVarName, url);
 }
 /*! Bundled license information:
 

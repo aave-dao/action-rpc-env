@@ -21,6 +21,10 @@ Quicknode API key and endpoint name
 
 If given, the action substitute missing RPC_URLs with one constructed from the given token & name pair.
 
+#### Public fallback
+
+Chains still unset fall back to the public rpc from `@aave-dao/toolbox`. Chains without one are skipped with a warning.
+
 ### Supported Environment Variables
 
 The supported environment variables are documented in [this](src/lib.test.ts) test.
